@@ -11,7 +11,7 @@ Inspired by the [sambala](https://github.com/lp/sambala) gem.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'smb-client'
+gem 'smb/client'
 ```
 
 And then execute:
