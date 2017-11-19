@@ -103,6 +103,9 @@ class SMB::ClientHelperTest < Minitest::Test
     assert get_file_path
     assert_equal File.size(tempfile.path), File.size(get_file_path)
 
+    # Read content
+    assert_equal content, @smb_client.read(filename)
+
     ### Delete
     assert_equal true, @smb_client.del(filename, false)
 

@@ -36,7 +36,7 @@ module SMB
     def ls(mask = '', raise = true)
       ls_items = []
       output = exec 'ls ' + mask
-      output.lines do |line|
+      output.lines.each do |line|
         ls_item = LsItem.from_line(line)
         ls_items << ls_item if ls_item
       end
@@ -106,6 +106,14 @@ module SMB
     rescue Client::RuntimeError => e
       raise e if raise
       false
+    end
+
+    def read(from, overwrite = false, raise = true)
+      tempfile = Tempfile.new
+      to = tempfile.path
+      tempfile.unlink
+      get from, to, overwrite, raise
+      File.read to
     end
   end
 end

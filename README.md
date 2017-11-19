@@ -1,8 +1,10 @@
-# Smb::Client
+# SMB::Client
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/smb/client`. To experiment with that code, run `bin/console` for an interactive prompt.
+SMB::Client is a wrapper around the smbclient binary installed on your system.
 
-TODO: Delete this and the text above, and describe your gem
+Currently just the SMB2 protocol was tested.
+
+Inspired by the [sambala](https://github.com/lp/sambala) gem.
 
 ## Installation
 
@@ -22,7 +24,51 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Setup
+
+```ruby
+options = {
+  host: 'Your host',
+  user: 'username',
+  share: 'share',
+  password: 'password',
+  version: 2
+}
+@smb_client = SMB::Client.new options
+```
+
+### List directories
+
+Always returns an array with `LsItem` elements.
+
+```ruby
+@smb_client.ls
+@smb_client.ls 'subdirectory/'
+```
+
+### List directories
+
+Always returns an array with `LsItem` elements.
+
+```ruby
+@smb_client.ls
+@smb_client.ls 'subdirectory/'
+```
+
+### Directories
+
+```ruby
+@smb_client.mkdir(directory) # => true or raises
+@smb_client.rmdir(directory) # => true or raises
+```
+
+### Files
+```ruby
+@smb_client.put(local_path, remote_path)
+@smb_client.write(content, local_path)
+@smb_client.del(filename)
+@smb_client.read(filename) # => Reads content of file
+```
 
 ## Development
 
@@ -32,7 +78,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/smb-client. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/RalfHerzog/smb-client. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
@@ -40,4 +86,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the Smb::Client project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/smb-client/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the SMB::Client project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/RalfHerzog/smb-client/blob/master/CODE_OF_CONDUCT.md).
