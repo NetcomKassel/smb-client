@@ -22,29 +22,6 @@ class SMB::ClientTest < Minitest::Test
     @smb_client = SMB::Client.new options
   end
 
-  def test_mkdir
-    # Create a directory
-    @smb_client.exec 'mkdir test'
-    # The next time it should result an error (already exist)
-    assert_raises SMB::Client::RuntimeError do
-      @smb_client.exec 'mkdir test'
-    end
-
-    # Remove the directory
-    @smb_client.exec 'rmdir test'
-    # The next time it should result an error (not existent)
-    assert_raises SMB::Client::RuntimeError do
-      @smb_client.exec 'rmdir test'
-    end
-  end
-
-  def test_ls
-    @smb_client.exec 'ls'
-    assert_raises SMB::Client::RuntimeError do
-      @smb_client.exec 'ls SomeThingNotExistent'
-    end
-  end
-
   def teardown
     @smb_client.close
   end

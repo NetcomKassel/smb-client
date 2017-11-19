@@ -4,10 +4,13 @@ require 'open3'
 require 'timeout'
 
 require_relative 'connection_error'
+require_relative 'client_helper'
 require_relative 'runtime_error'
 
 module SMB
   class Client
+    include ClientHelper
+
     attr_accessor :executable, :pid
 
     def initialize(options = {})
@@ -85,9 +88,9 @@ module SMB
               output.expect(/smb: \\>$/) { |text| handle_response text }
             end
           end
-        rescue Errno::EIO => _
+        rescue Errno::EIO => e
           if @connection_established
-            raise StandardError, 'Some unexpected error occoured'
+            raise StandardError, "Unexpected error: [#{e.message}]"
           else
             raise Client::ConnectionError, 'Cannot connect to SMB server'
           end
