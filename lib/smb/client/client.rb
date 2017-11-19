@@ -37,9 +37,11 @@ module SMB
       @first_message = true
 
       @connection_established = false
+      @shutdown_in_progress = false
     end
 
     def close
+      @shutdown_in_progress = true
       Process.kill('QUIT', @pid) == 1
     end
 
@@ -89,10 +91,12 @@ module SMB
             end
           end
         rescue Errno::EIO => e
-          if @connection_established
-            raise StandardError, "Unexpected error: [#{e.message}]"
-          else
-            raise Client::ConnectionError, 'Cannot connect to SMB server'
+          unless @shutdown_in_progress
+            if @connection_established
+              raise StandardError, "Unexpected error: [#{e.message}]"
+            else
+              raise Client::ConnectionError, 'Cannot connect to SMB server'
+            end
           end
         end
       end

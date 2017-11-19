@@ -27,6 +27,8 @@ Or install it yourself as:
 ### Setup
 
 ```ruby
+require 'smb/client'
+
 options = {
   host: 'Your host',
   user: 'username',
