@@ -43,16 +43,12 @@ Always returns an array with `LsItem` elements.
 
 ```ruby
 @smb_client.ls
-@smb_client.ls 'subdirectory/'
-```
-
-### List directories
-
-Always returns an array with `LsItem` elements.
-
-```ruby
-@smb_client.ls
-@smb_client.ls 'subdirectory/'
+ls_items = @smb_client.ls 'subdirectory/'
+# => [#<SMB::ClientHelper::LsItem:0x007f3c58020468 @name=".", @type="D", @size=0, @change_time=2017-11-20 00:02:12 +0100>]
+current_dir = ls_items.find { |ls_item| ls_item.name == '.' }
+current_dir.file?      # => false
+current_dir.directory? # => true
+current_dir.hidden?    # => false
 ```
 
 ### Directories
@@ -64,9 +60,9 @@ Always returns an array with `LsItem` elements.
 
 ### Files
 ```ruby
-@smb_client.put(local_path, remote_path)
-@smb_client.write(content, local_path)
-@smb_client.del(filename)
+@smb_client.put(local_path, remote_path) # => true or raises
+@smb_client.write(content, local_path)   # => true or raises
+@smb_client.del(filename)  # => true or raises
 @smb_client.read(filename) # => Reads content of file
 ```
 
