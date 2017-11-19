@@ -10,9 +10,19 @@ module SMB
   class Client
     attr_accessor :executable, :pid
 
-    def initialize
+    def initialize(options = {})
       @executable = ENV.fetch('SMBCLIENT_EXECUTABLE') { 'smbclient' }
-      run '//172.17.0.2/guest1_private pass1 -U guest1 -W WORKGROUP -m SMB2'
+      @options = {
+        user: options[:user],
+        share: options[:share],
+        password: options[:password],
+        version: options[:version] || 2,
+        host: options[:host] || 'localhost',
+        workgroup: options[:workgroup] || 'WORKGROUP'
+      }
+
+      Thread.abort_on_exception = true
+      connect
 
       # Pipe used to pass commands to pty
       @read1, @write1 = IO.pipe
@@ -51,7 +61,7 @@ module SMB
 
     private
 
-    def run(params)
+    def connect
       # Run +@executable+ in a separate thread to talk to hin asynchronosly
       Thread.start do
         # Spawn the actual +@executable+ pty with +input+ and +output+ handle
@@ -83,6 +93,14 @@ module SMB
           end
         end
       end
+    end
+
+    def params
+      @options.map do |k, v|
+        v.nil? && raise(Client::RuntimeError, "Missing option [:#{k}]")
+      end
+      "//#{@options[:host]}/#{@options[:share]} #{@options[:password]} \
+-U #{@options[:user]} #{@options[:workgroup]} -m SMB#{@options[:version]}"
     end
 
     def handle_response(text)
