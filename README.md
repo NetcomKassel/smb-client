@@ -32,6 +32,7 @@ options = {
   user: 'username',
   share: 'share',
   password: 'password',
+  workgroup: 'WORKGROUP',
   version: 2
 }
 @smb_client = SMB::Client.new options
