@@ -90,8 +90,6 @@ module SMB
               end
             end
 
-            @connection_established = true
-
             # Wait for responses ending with input prompt
             loop do
               output.expect(/smb: \\>$/) { |text| handle_response text }
@@ -125,12 +123,15 @@ module SMB
       # receive this
       if @first_message
         @first_message = false
+        # TODO: Filter for server information? => Domain, OS and Server
+
+        @connection_established = true
         return
       end
 
       # Format responses
       # Ignore command sent (the first returned line) and the last returned
-      # which is the smb prompt
+      # which is the smb prompt ("smb: \>")
       @write2.write text[0].lines[1..-2].join
       @write2.close
     end
