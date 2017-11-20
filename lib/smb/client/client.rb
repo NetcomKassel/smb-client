@@ -8,11 +8,14 @@ require_relative 'client_helper'
 require_relative 'runtime_error'
 
 module SMB
+  # Low-level interface to smbclient executable
   class Client
     include ClientHelper
 
     attr_accessor :executable, :pid
 
+    # Creates a new instance and connects to server
+    # @param [Hash] options Hash with connection options
     def initialize(options = {})
       @executable = ENV.fetch('SMBCLIENT_EXECUTABLE') { 'smbclient' }
       @options = {
@@ -40,11 +43,14 @@ module SMB
       @shutdown_in_progress = false
     end
 
+    # Closes the connection to the server end terminates all running threads
     def close
       @shutdown_in_progress = true
       Process.kill('QUIT', @pid) == 1
     end
 
+    # Execute a smbclient command
+    # @param [String] cmd The command to be executed
     def exec(cmd)
       # Send command
       @write1.puts cmd
@@ -66,8 +72,9 @@ module SMB
 
     private
 
+    # Connect to the server using separate threads and pipe for communications
     def connect
-      # Run +@executable+ in a separate thread to talk to hin asynchronosly
+      # Run +@executable+ in a separate thread to talk to hin asynchronously
       Thread.start do
         # Spawn the actual +@executable+ pty with +input+ and +output+ handle
         begin
@@ -102,6 +109,8 @@ module SMB
       end
     end
 
+    # Returns the parameters for the +smbclient+ command
+    # @return [String] The parameters
     def params
       @options.map do |k, v|
         v.nil? && raise(Client::RuntimeError, "Missing option [:#{k}]")
@@ -110,6 +119,7 @@ module SMB
 -U #{@options[:user]} #{@options[:workgroup]} -m SMB#{@options[:version]}"
     end
 
+    # Handles a response from smbclient
     def handle_response(text)
       # Write to second pipe so the origin command invocation thread can
       # receive this
