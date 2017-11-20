@@ -16,11 +16,15 @@ gem 'smb/client'
 
 And then execute:
 
-    $ bundle
+```bash
+$ bundler install
+```
 
 Or install it yourself as:
 
-    $ gem install smb-client
+```bash
+$ gem install smb-client
+```
 
 ## Usage
 
@@ -74,6 +78,24 @@ current_dir.hidden?    # => false
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+
+### Setup a SMB server for tests
+
+For example with docker:
+```bash
+$ docker run -d -t --name samba -v /mount -d dperson/samba -u "guest1;pass1" -s "guest1_private;/mount;no;no;no;guest1" -w WORKGROUP
+$ docker exec samba chmod 777 /mount
+```
+
+To get the container ip address run:
+
+```bash
+$ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' samba
+```
+
+This returns for example: `172.17.0.2`
+
+Now set the IP in the [test_helper.rb](https://github.com/NetcomKassel/smb-client/blob/master/test/test_helper.rb)'s `SMB_CLIENT_OPTIONS` hash.
 
 ## Contributing
 
