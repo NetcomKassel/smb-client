@@ -13,6 +13,7 @@ module SMB
     # @return [Array] List of +mask+ matching LsItems
     def ls(mask = '', raise = true)
       ls_items = []
+      mask = '"' + mask + '"' if mask.include? ' '
       output = exec 'ls ' + mask
       output.lines.each do |line|
         ls_item = LsItem.from_line(line)
@@ -32,6 +33,7 @@ module SMB
     # @param [Boolean] raise raise Error or just return +false+
     # @return [Boolean] true on success
     def mkdir(path, raise = true)
+      path = '"' + path + '"' if mask.include? ' '
       exec 'mkdir ' + path
       true
     rescue Client::RuntimeError => e
@@ -44,6 +46,7 @@ module SMB
     # @param [TrueClass/FalseClass] raise raise Error or just return +false+
     # @return [Boolean] true on success
     def rmdir(path, raise = true)
+      path = '"' + path + '"' if mask.include? ' '
       exec 'rmdir ' + path
       true
     rescue Client::RuntimeError => e
@@ -62,6 +65,8 @@ module SMB
       if !overwrite && !ls_items.empty?
         raise Client::RuntimeError, "File [#{to}] already exist"
       end
+      from = '"' + from + '"' if mask.include? ' '
+      to = '"' + to + '"' if mask.include? ' '
       exec 'put ' + from + ' ' + to
       true
     rescue Client::RuntimeError => e
@@ -89,6 +94,7 @@ module SMB
     # @param [Boolean] raise raise raise Error or just return +false+
     # @return [Boolean] true on success
     def del(path, raise = true)
+      path = '"' + path + '"' if mask.include? ' '
       exec 'del ' + path
       true
     rescue Client::RuntimeError => e
@@ -115,6 +121,7 @@ module SMB
       if !overwrite && File.exist?(to)
         raise Client::RuntimeError, "File [#{to}] already exist locally"
       end
+      from = '"' + from + '"' if mask.include? ' '
       exec 'get ' + from + ' ' + to
       to
     rescue Client::RuntimeError => e
