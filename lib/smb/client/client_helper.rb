@@ -111,6 +111,7 @@ module SMB
     # @param [String] to local file path to be created
     # @param [Boolean] overwrite Overwrite if exist locally?
     # @param [Boolean] raise raise Error or just return +false+
+    # @return [String] path to local file
     def get(from, to = nil, overwrite = false, raise = true)
       # Create a new tempfile but delete it
       # The tempfile.path should be free to use now
@@ -140,6 +141,14 @@ module SMB
       tempfile.unlink
       get from, to, overwrite, raise
       File.read to
+    end
+
+    # Returns `true` if mask exist on server
+    # @param [String] mask Mask to search for
+    # @return [Boolean] TrueClass if mask exist
+    def exist?(mask)
+      ls_items = ls mask, false
+      !ls_items.empty?
     end
   end
 end

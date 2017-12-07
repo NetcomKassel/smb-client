@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  smb-client:
+    build: .
+    container_name: smb-client
+    environment:
+      - TZ=Europe/Berlin
+    links:
+      - smb-server
+    depends_on:
+      - smb-server
+
+  smb-server:
+    container_name: smb-server
+    image: dperson/samba
+    volumes:
+      - /mount
+    command: '-p -u "guest1;pass1" -s "guest1_private;/mount;no;no;no;guest1" -w WORKGROUP'
+    environment:
+      - TZ=Europe/Berlin

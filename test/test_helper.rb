@@ -17,6 +17,6 @@ SMB_CLIENT_OPTIONS = {
   share: 'guest1_private',
   password: 'pass1',
   version: 2,
-  host: '172.17.0.2',
+  host: 'smb-server',
   workgroup: 'WORKGROUP'
 }.freeze

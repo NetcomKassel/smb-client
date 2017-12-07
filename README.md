@@ -81,19 +81,9 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 For example with docker:
 ```bash
-$ docker run -d -t --name samba -v /mount -d dperson/samba -u "guest1;pass1" -s "guest1_private;/mount;no;no;no;guest1" -w WORKGROUP
-$ docker exec samba chmod 777 /mount
+$ docker-compose build
+$ docker-compose up
 ```
-
-To get the container ip address run:
-
-```bash
-$ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' samba
-```
-
-This returns for example: `172.17.0.2`
-
-Now set the IP in the [test_helper.rb](https://github.com/NetcomKassel/smb-client/blob/master/test/test_helper.rb)'s `SMB_CLIENT_OPTIONS` hash.
 
 ## Contributing
 
