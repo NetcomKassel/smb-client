@@ -114,7 +114,7 @@ module SMB
         v.nil? && raise(Client::RuntimeError, "Missing option [:#{k}]")
       end
       "//#{@options[:host]}/#{@options[:share]} #{@options[:password]} \
--U #{@options[:user]} #{@options[:workgroup]} -m SMB#{@options[:version]}"
+-U #{@options[:user]} -W #{@options[:workgroup]} -m SMB#{@options[:version]}"
     end
 
     # Handles a response from smbclient

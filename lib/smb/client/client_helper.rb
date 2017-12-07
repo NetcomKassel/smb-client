@@ -13,6 +13,7 @@ module SMB
     # @return [Array] List of +mask+ matching LsItems
     def ls(mask = '', raise = true)
       ls_items = []
+      mask = '"' + mask + '"' if mask.include? ' '
       output = exec 'ls ' + mask
       output.lines.each do |line|
         ls_item = LsItem.from_line(line)
@@ -32,6 +33,7 @@ module SMB
     # @param [Boolean] raise raise Error or just return +false+
     # @return [Boolean] true on success
     def mkdir(path, raise = true)
+      path = '"' + path + '"' if path.include? ' '
       exec 'mkdir ' + path
       true
     rescue Client::RuntimeError => e
@@ -44,6 +46,7 @@ module SMB
     # @param [TrueClass/FalseClass] raise raise Error or just return +false+
     # @return [Boolean] true on success
     def rmdir(path, raise = true)
+      path = '"' + path + '"' if path.include? ' '
       exec 'rmdir ' + path
       true
     rescue Client::RuntimeError => e
@@ -62,6 +65,8 @@ module SMB
       if !overwrite && !ls_items.empty?
         raise Client::RuntimeError, "File [#{to}] already exist"
       end
+      from = '"' + from + '"' if from.include? ' '
+      to = '"' + to + '"' if to.include? ' '
       exec 'put ' + from + ' ' + to
       true
     rescue Client::RuntimeError => e
@@ -89,6 +94,7 @@ module SMB
     # @param [Boolean] raise raise raise Error or just return +false+
     # @return [Boolean] true on success
     def del(path, raise = true)
+      path = '"' + path + '"' if path.include? ' '
       exec 'del ' + path
       true
     rescue Client::RuntimeError => e
@@ -105,6 +111,7 @@ module SMB
     # @param [String] to local file path to be created
     # @param [Boolean] overwrite Overwrite if exist locally?
     # @param [Boolean] raise raise Error or just return +false+
+    # @return [String] path to local file
     def get(from, to = nil, overwrite = false, raise = true)
       # Create a new tempfile but delete it
       # The tempfile.path should be free to use now
@@ -115,6 +122,7 @@ module SMB
       if !overwrite && File.exist?(to)
         raise Client::RuntimeError, "File [#{to}] already exist locally"
       end
+      from = '"' + from + '"' if from.include? ' '
       exec 'get ' + from + ' ' + to
       to
     rescue Client::RuntimeError => e
@@ -133,6 +141,14 @@ module SMB
       tempfile.unlink
       get from, to, overwrite, raise
       File.read to
+    end
+
+    # Returns `true` if mask exist on server
+    # @param [String] mask Mask to search for
+    # @return [Boolean] TrueClass if mask exist
+    def exist?(mask)
+      ls_items = ls mask, false
+      !ls_items.empty?
     end
   end
 end

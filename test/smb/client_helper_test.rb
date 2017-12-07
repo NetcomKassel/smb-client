@@ -1,4 +1,4 @@
-require 'test_helper'
+require_relative '../test_helper'
 
 require 'tempfile'
 
@@ -63,9 +63,17 @@ class SMB::ClientHelperTest < Minitest::Test
 
     ### Upload
     ls_items = @smb_client.ls(filename, false)
+
+    # Delete if exist
     !ls_items.empty? && @smb_client.del(filename)
 
+    ### Exist?
+    assert_equal false, @smb_client.exist?(filename)
+
     assert_equal true, @smb_client.put(tempfile.path, filename)
+
+    ### Exist?
+    assert_equal true, @smb_client.exist?(filename)
 
     # Already exist
     assert_raises SMB::Client::RuntimeError do
