@@ -8,15 +8,15 @@ module SMB
       attr_accessor :name, :type, :size, :change_time
 
       def file?
-        @type.include? 'N'
+        %w[A N].include? @type
       end
 
       def directory?
-        @type.include? 'D'
+        %w[D].include? @type
       end
 
       def hidden?
-        @type.include? 'H'
+        %w[H].include? @type
       end
 
       def self.from_line(line)
