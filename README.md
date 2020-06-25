@@ -11,7 +11,7 @@ Inspired by the [sambala](https://github.com/lp/sambala) gem.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'smb/client'
+gem 'smb-client'
 ```
 
 And then execute:
@@ -69,6 +69,7 @@ current_dir.hidden?    # => false
 @smb_client.write(content, local_path)   # => true or raises
 @smb_client.del(filename)  # => true or raises
 @smb_client.read(filename) # => Reads content of file
+@smb_client.rename(remote_path_src, remote_path_dst) # => true or raises
 ```
 
 ## Development
