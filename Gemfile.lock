@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    smb-client (0.1.7)
+    smb-client (0.1.6)
 
 GEM
   remote: https://rubygems.org/
@@ -27,4 +27,4 @@ DEPENDENCIES
   smb-client!
 
 BUNDLED WITH
-   1.17.3
+   1.17.2
