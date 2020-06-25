@@ -150,5 +150,25 @@ module SMB
       ls_items = ls mask, false
       !ls_items.empty?
     end
+
+    # Rename a remote file
+    # @param [String] remote_path_src The source file path (on remote machine)
+    # @param [String] remote_path_dst The destination file path (on remote machine)
+    # @param [Boolean] overwrite Overwrite if exist on server?
+    # @param [Boolean] raise raise Error or just return +false+
+    # @return [Boolean] true on success
+    def rename(remote_path_src, remote_path_dst, overwrite = false, raise = true)
+      ls_items = ls remote_path_dst, false
+      if !overwrite && !ls_items.empty?
+        raise Client::RuntimeError, "File [#{remote_path_dst}] already exist"
+      end
+      remote_path_src = '"' + remote_path_src + '"' if remote_path_src.include? ' '
+      remote_path_dst = '"' + remote_path_dst + '"' if remote_path_dst.include? ' '
+      exec 'rename ' + remote_path_src + ' ' + remote_path_dst
+      true
+    rescue Client::RuntimeError => e
+      raise e if raise
+      false
+    end
   end
 end

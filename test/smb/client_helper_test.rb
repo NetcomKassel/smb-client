@@ -60,6 +60,7 @@ class SMB::ClientHelperTest < Minitest::Test
     tempfile << content
     tempfile.close
     filename = 'test_file'
+    filename_b = 'rename_file'
 
     ### Upload
     ls_items = @smb_client.ls(filename, false)
@@ -96,6 +97,15 @@ class SMB::ClientHelperTest < Minitest::Test
 
     # Read content
     assert_equal content, @smb_client.read(filename)
+
+    # Rename
+    assert_equal true, @smb_client.rename(filename, filename_b)
+    assert_equal true, @smb_client.write(content, filename, true)
+    assert_raises SMB::Client::RuntimeError do
+      assert_equal true, @smb_client.rename(filename_b, filename)
+    end
+    assert_equal false, @smb_client.rename(filename_b, filename, false, false)
+    assert_equal true, @smb_client.del(filename_b, false)
 
     ### Delete
     assert_equal true, @smb_client.del(filename, false)
